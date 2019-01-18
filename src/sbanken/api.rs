@@ -16,7 +16,7 @@ use sbanken::helpers::{build_authorization_http_client, build_api_client};
 
 const AUTH_ENDPOINT: &str = "https://auth.sbanken.no/identityserver/connect/token";
 const ACCOUNTS_API: &str = "https://api.sbanken.no/bank/api/v1/accounts";
-const TRANSACTIONS_API: &str = "https://api.sbanken.no/bank/api/v1/accounts";
+const TRANSACTIONS_API: &str = "https://api.sbanken.no/bank/api/v1/transactions";
 
 // @ToDo: Inform that changing permission requires new key.
 
