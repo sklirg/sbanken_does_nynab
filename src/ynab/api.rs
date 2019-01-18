@@ -6,38 +6,15 @@ use std::io::Read;
 const BUDGETS_API: &str = "https://api.youneedabudget.com/v1/budgets";
 
 pub fn get_ynab_budgets() {
-    let client = build_api_client();
-
-    let request = client
-        .get(BUDGETS_API)
-        .send();
-
-    let mut resp = match request {
-        Ok(resp) => resp,
-        Err(error) => {
-            error!("{}", error);
-            panic!("Response failed");
-        },
+    let url: reqwest::Url = match reqwest::Url::parse(BUDGETS_API) {
+        Ok(val) => val,
+        Err(error) => panic!("Failed to parse url: {}", error),
     };
 
-    match resp.status() {
-        StatusCode::OK => trace!("HTTP OK"),
-        status => warn!("Unhandled status code: {}", status),
-    }
-
-    let mut body = String::new();
-    match resp.read_to_string(&mut body) {
-        Ok(data) => {
-            trace!("Receieved {} data", data);
-        },
-        Err(error) => {
-            error!("Failed to read response to string: {}", error);
-        }
-    }
-
-    let budgets = budgets_response_to_budgets(body);
-
+    let resp = do_api_request(url, Method::GET);
+    let budgets = budgets_response_to_budgets(resp);
     debug!("Budgets: {:#?}", budgets);
+    // return budgets;
 }
 
 fn do_api_request(url: reqwest::Url, method: Method) -> String {
