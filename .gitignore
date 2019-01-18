@@ -16,6 +16,9 @@ Cargo.lock
 # End of https://www.gitignore.io/api/rust/target
 **/*.rs.bk
 
+# Temporary files
+tmp/*
+
 # MacOS files
 .DS_Store
 
