@@ -6,19 +6,25 @@ extern crate reqwest;
 #[macro_use]
 extern crate serde_derive;
 
+mod helpers;
 mod sbanken;
 
 use sbanken::model::{Transaction};
 
+const SKIP_SBANKEN: bool = false;
+
 fn main() {
     log4rs::init_file("log4rs.yml", Default::default()).unwrap();
 
-    info!("Starting transaction fetcher");
+    info!("Starting app");
 
-    let all_transactions = fetch_transactions();
+    if !SKIP_SBANKEN {
+        info!("Starting transaction fetcher");
+        let all_transactions = fetch_transactions();
 
-    for transaction in &all_transactions {
-        trace!("{:#?}", transaction);
+        for transaction in &all_transactions {
+            trace!("{:#?}", transaction);
+        }
     }
 
     info!("Done.");

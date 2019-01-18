@@ -85,7 +85,7 @@ fn fetch_accounts() -> Vec<Account> {
     let mut body = String::new();
     match resp.read_to_string(&mut body) {
         Ok(data) => {
-            debug!("Receieved {} data", data);
+            trace!("Receieved {} data", data);
         },
         Err(error) => {
             error!("Failed to read response to string: {}", error);
@@ -120,7 +120,9 @@ fn fetch_transactions(account_id: String) -> Vec<Transaction> {
 
     let mut body = String::new();
     match resp.read_to_string(&mut body) {
-        Ok(_) => {},
+        Ok(data) => {
+            trace!("Receieved {} data", data);
+        },
         Err(error) => {
             error!("Failed to read response to string: {}", error);
         }
