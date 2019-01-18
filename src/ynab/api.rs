@@ -1,11 +1,12 @@
 use reqwest::{StatusCode, Method};
 use ynab::data::{budgets_response_to_budgets};
 use ynab::helpers::{build_api_client};
+use ynab::model::{Budget};
 use std::io::Read;
 
 const BUDGETS_API: &str = "https://api.youneedabudget.com/v1/budgets";
 
-pub fn get_ynab_budgets() {
+pub fn get_ynab_budgets() -> Vec<Budget> {
     let url: reqwest::Url = match reqwest::Url::parse(BUDGETS_API) {
         Ok(val) => val,
         Err(error) => panic!("Failed to parse url: {}", error),
@@ -14,7 +15,7 @@ pub fn get_ynab_budgets() {
     let resp = do_api_request(url, Method::GET);
     let budgets = budgets_response_to_budgets(resp);
     debug!("Budgets: {:#?}", budgets);
-    // return budgets;
+    return budgets;
 }
 
 fn do_api_request(url: reqwest::Url, method: Method) -> String {
