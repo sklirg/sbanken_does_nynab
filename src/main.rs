@@ -8,10 +8,13 @@ extern crate serde_derive;
 
 mod helpers;
 mod sbanken;
+mod ynab;
 
 use sbanken::model::{Transaction};
+use ynab::api::{get_ynab_budgets};
 
 const SKIP_SBANKEN: bool = true;
+const SKIP_YNAB: bool = false;
 
 fn main() {
     log4rs::init_file("log4rs.yml", Default::default()).unwrap();
@@ -27,10 +30,19 @@ fn main() {
         }
     }
 
+    if !SKIP_YNAB {
+        info!("Starting YNAB sync");
+        update_ynab();
+    }
+
     info!("Done.");
 }
 
 fn fetch_transactions() -> Vec<Transaction> {
     info!("Fetching transactions.");
     return sbanken::api::fetch_transactions_from_sbanken();
+}
+
+fn update_ynab() {
+    get_ynab_budgets();
 }
