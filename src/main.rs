@@ -11,7 +11,7 @@ mod sbanken;
 mod ynab;
 
 use sbanken::model::{Transaction};
-use ynab::api::{get_ynab_budgets};
+use ynab::api::{get_accounts, get_ynab_budgets};
 
 const SKIP_SBANKEN: bool = true;
 const SKIP_YNAB: bool = false;
@@ -44,5 +44,9 @@ fn fetch_transactions() -> Vec<Transaction> {
 }
 
 fn update_ynab() {
-    get_ynab_budgets();
+    let budgets = get_ynab_budgets();
+
+    for budget in budgets {
+        get_accounts(budget.id);
+    }
 }
