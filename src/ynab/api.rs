@@ -7,12 +7,7 @@ use std::io::Read;
 const BUDGETS_API: &str = "https://api.youneedabudget.com/v1/budgets";
 
 pub fn get_ynab_budgets() -> Vec<Budget> {
-    let url: reqwest::Url = match reqwest::Url::parse(BUDGETS_API) {
-        Ok(val) => val,
-        Err(error) => panic!("Failed to parse url: {}", error),
-    };
-
-    let resp = do_api_request(url, Method::GET);
+    let resp = do_api_request(parse_url(BUDGETS_API), Method::GET);
     let budgets = budgets_response_to_budgets(resp);
     debug!("Budgets: {:#?}", budgets);
     return budgets;
