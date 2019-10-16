@@ -33,7 +33,7 @@ loggers:
     additive: false
 
   sbanken_does_nynab:
-    level: debug
+    level: info
     appenders:
       - stdout
     additive: false
