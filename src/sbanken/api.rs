@@ -3,6 +3,7 @@ extern crate serde_json;
 
 use self::serde_json::{from_str};
 use reqwest::{StatusCode};
+use std::collections::HashMap;
 use std::io::Read;
 use sbanken::model::{Account, BearerTokenResponse, Transaction};
 use sbanken::data::{accounts_response_to_account, transactions_response_to_transactions};
@@ -15,8 +16,8 @@ use sbanken::helpers::{build_authorization_http_client, build_api_client};
 // const TRANSACTIONS : &str = "/v1/transactions";
 
 const AUTH_ENDPOINT: &str = "https://auth.sbanken.no/identityserver/connect/token";
-const ACCOUNTS_API: &str = "https://api.sbanken.no/bank/api/v1/accounts";
-const TRANSACTIONS_API: &str = "https://api.sbanken.no/bank/api/v1/transactions";
+const ACCOUNTS_API: &str = "https://api.sbanken.no/exec.bank/api/v1/accounts";
+const TRANSACTIONS_API: &str = "https://api.sbanken.no/exec.bank/api/v1/transactions";
 
 // @ToDo: Inform that changing permission requires new key.
 
@@ -39,6 +40,11 @@ fn fetch_client_credentials() -> String {
         }
     };
 
+    // @ToDo: Handle NON 200 OK status code
+
+    if resp.status() != 200 {
+        warn!("Client Credentials request failed with non 200 status code");
+    }
     let mut body = String::new();
     match resp.read_to_string(&mut body) {
         Ok(_) => {},
@@ -95,7 +101,7 @@ fn fetch_accounts() -> Vec<Account> {
     return accounts_response_to_account(body);
 }
 
-fn fetch_transactions(account_id: String) -> Vec<Transaction> {
+fn fetch_transactions(account_id: &str) -> Vec<Transaction> {
     let bearer_token = fetch_client_credentials().to_owned();
 
     let client = build_api_client(bearer_token);
@@ -131,20 +137,16 @@ fn fetch_transactions(account_id: String) -> Vec<Transaction> {
     return transactions_response_to_transactions(body);
 }
 
-pub fn fetch_transactions_from_sbanken() -> Vec<Transaction> {
+pub fn fetch_transactions_from_sbanken() -> HashMap<String, Vec<Transaction>> {
     let accounts = fetch_accounts();
 
-    let mut transactions : Vec<Transaction> = Vec::new();
+    let mut accounts_with_transactions: HashMap<String, Vec<Transaction>> = HashMap::new();
 
     for account in accounts {
-        debug!("Account ID {}", account.account_id);
-        let t = fetch_transactions(account.account_id);
-
-        for transaction in t {
-            debug!("Transaction {}: {} => {}", transaction.transaction_id, transaction.text, transaction.amount);
-            transactions.push(transaction);
-        }
+        let t = fetch_transactions(&account.account_id);
+        info!("Account ID {} with {} transactions", account.account_id, t.len());
+        accounts_with_transactions.insert(account.account_id, t);
     }
 
-    return transactions;
+    return accounts_with_transactions;
 }

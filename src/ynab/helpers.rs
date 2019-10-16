@@ -23,3 +23,9 @@ pub fn build_api_client() -> reqwest::Client {
             },
         };;
 }
+
+pub fn to_milliunits(amount: &f32) -> i32 {
+    let converted_amount = (amount * 1000.0) as i32;
+    trace!("Converting f32:{} => i32:{}", amount, converted_amount);
+    return converted_amount;
+}

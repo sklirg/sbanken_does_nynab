@@ -10,6 +10,12 @@ pub fn get_config() -> YnabConfig {
                 panic!("Failed to read ynab token from env: {}", error);
             }
         },
+        budget_id: match var("SBDNY_YNAB_BUDGET") {
+            Ok(val) => val,
+            Err(error) => {
+                panic!("Failed to read ynab budget id from env: {}", error);
+            }
+        }
     };
 
     return config;
