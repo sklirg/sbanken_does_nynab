@@ -1,5 +1,6 @@
 extern crate serde_derive;
 
+#[derive(Debug)]
 pub struct SbankenConfig {
     pub username: String,
     pub password: String,
