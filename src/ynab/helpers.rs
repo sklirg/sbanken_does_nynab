@@ -21,7 +21,7 @@ pub fn build_api_client() -> reqwest::Client {
                 error!("Building HTTP Client failed: {}", error);
                 panic!("building client failed");
             },
-        };;
+        };
 }
 
 pub fn to_milliunits(amount: &f32) -> i32 {

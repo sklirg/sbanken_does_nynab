@@ -47,5 +47,5 @@ pub fn build_api_client(credentials: String) -> reqwest::Client {
                 error!("Building HTTP Client failed: {}", error);
                 panic!("building client failed");
             },
-        };;
+        };
 }
