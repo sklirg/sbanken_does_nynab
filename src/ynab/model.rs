@@ -107,7 +107,7 @@ pub fn sbanken_to_ynab_transaction(transaction: &SbankenTransaction, account_id:
 
     let ynab_account = sbanken_account_to_ynab(account_id);
 
-    let import_id = format!("sbkn:{}-{}-{}", transaction.accounting_date.to_string(), transaction.text, transaction.amount)[..36].to_string();
+    let import_id = format!("sb:{}-{}-{:?}", transaction.accounting_date[..10].to_string(), transaction.amount, transaction.text.chars())[..36].to_string();
 
     return Transaction{
         account_id: ynab_account,
