@@ -66,6 +66,7 @@ pub struct AccountBaseResponse {
 pub struct Transaction {
     pub account_id: String,
     pub date: String,
+    pub payee_name: Option<String>,
     pub amount: i32,
     pub memo: Option<String>,
     pub import_id: String,
@@ -111,6 +112,7 @@ pub fn sbanken_to_ynab_transaction(transaction: &SbankenTransaction, account_id:
     return Transaction{
         account_id: ynab_account,
         date: transaction.accounting_date.to_string(),
+        payee_name: Some(transaction.text.to_string()),
         amount: converted_amount,
         memo: Some(transaction.text.to_string()),
         import_id: import_id,
