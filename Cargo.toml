@@ -2,9 +2,12 @@
 name = "sbanken_does_nynab"
 version = "0.1.0"
 authors = ["Håkon Solbjørg <hlsolbjorg@gmail.com>"]
+#edition = "2018"
 
 [dependencies]
 base64 = "0.10.0"
+chrono = "0.4.19"
+urlencoding = "1.1.1"
 log = "0.4"
 log4rs = "0.8.1"
 hyper = "0.12.35"
