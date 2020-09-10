@@ -5,6 +5,7 @@ authors = ["Håkon Solbjørg <hlsolbjorg@gmail.com>"]
 
 [dependencies]
 base64 = "0.10.0"
+urlencoding = "1.1.1"
 log = "0.4"
 log4rs = "0.8.1"
 hyper = "0.12.35"

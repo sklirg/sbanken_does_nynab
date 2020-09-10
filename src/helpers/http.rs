@@ -1,6 +1,8 @@
 extern crate base64;
+extern crate urlencoding;
 
 use self::base64::{encode};
+use self::urlencoding::{encode as urlencode};
 use reqwest::header;
 
 pub enum AuthenticationType {
@@ -9,7 +11,7 @@ pub enum AuthenticationType {
 }
 
 pub fn base64_encode_uname_pw(username: String, password: String) -> String {
-    return encode(&format!("{}:{}", username, password));
+    return encode(&format!("{}:{}", urlencode(&username), urlencode(&password)));
 }
 
 pub fn generate_auth_header(credentials: String, auth_type: AuthenticationType) -> header::HeaderValue {
