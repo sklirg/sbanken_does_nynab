@@ -21,7 +21,7 @@ const TRANSACTIONS_API: &str = "https://api.sbanken.no/exec.bank/api/v1/transact
 
 // @ToDo: Inform that changing permission requires new key.
 
-fn fetch_client_credentials() -> String {
+fn fetch_client_credentials() -> Option<String> {
     let client = build_authorization_http_client();
 
     let body = [("grant_type", "client_credentials")];
@@ -36,38 +36,26 @@ fn fetch_client_credentials() -> String {
         Ok(resp) => resp,
         Err(error) => {
             error!("{}", error);
-            panic!("{}", error);
+            return None;
         }
     };
-
-    // @ToDo: Handle NON 200 OK status code
 
     if resp.status() != 200 {
-        warn!("Client Credentials request failed with non 200 status code");
+        error!("Client Credentials request failed with non 200 status code");
+        return None;
     }
     let mut body = String::new();
-    match resp.read_to_string(&mut body) {
-        Ok(_) => {},
-        Err(error) => {
-            error!("Failed to read response to string: {}", error);
-        }
-    }
+    resp.read_to_string(&mut body).ok()?;
 
-    let json_body : BearerTokenResponse = match from_str(&body) {
-        Ok(resp) => resp,
-        Err(error) => {
-            error!("{}", error);
-            panic!("{}", error);
-        },
-    };
+    let json_body : BearerTokenResponse = from_str(&body).ok()?;
 
     debug!("Retrieved bearer token");
 
-    return json_body.access_token;
+    Some(json_body.access_token)
 }
 
-fn fetch_accounts() -> Vec<Account> {
-    let bearer_token = fetch_client_credentials();
+fn fetch_accounts() -> Option<Vec<Account>> {
+    let bearer_token = fetch_client_credentials()?;
     let client = build_api_client(bearer_token);
 
     info!("Executing accounts request");
@@ -98,11 +86,11 @@ fn fetch_accounts() -> Vec<Account> {
         }
     }
 
-    return accounts_response_to_account(body);
+    Some(accounts_response_to_account(body))
 }
 
-fn fetch_transactions(account_id: &str) -> Vec<Transaction> {
-    let bearer_token = fetch_client_credentials().to_owned();
+fn fetch_transactions(account_id: &str) -> Option<Vec<Transaction>> {
+    let bearer_token = fetch_client_credentials()?.to_owned();
 
     let client = build_api_client(bearer_token);
 
@@ -115,7 +103,7 @@ fn fetch_transactions(account_id: &str) -> Vec<Transaction> {
         Ok(resp) => resp,
         Err(error) => {
             error!("{}", error);
-            panic!("Response failed");
+            return None;
         },
     };
 
@@ -134,19 +122,19 @@ fn fetch_transactions(account_id: &str) -> Vec<Transaction> {
         }
     }
 
-    return transactions_response_to_transactions(body);
+    Some(transactions_response_to_transactions(body))
 }
 
-pub fn fetch_transactions_from_sbanken() -> HashMap<String, Vec<Transaction>> {
-    let accounts = fetch_accounts();
+pub fn fetch_transactions_from_sbanken() -> Option<HashMap<String, Vec<Transaction>>> {
+    let accounts = fetch_accounts()?;
 
     let mut accounts_with_transactions: HashMap<String, Vec<Transaction>> = HashMap::new();
 
     for account in accounts {
-        let t = fetch_transactions(&account.account_id);
+        let t = fetch_transactions(&account.account_id)?;
         info!("Account ID {} with {} transactions", account.account_id, t.len());
         accounts_with_transactions.insert(account.account_id, t);
     }
 
-    return accounts_with_transactions;
+    Some(accounts_with_transactions)
 }

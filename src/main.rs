@@ -27,7 +27,10 @@ fn main() {
 
     if !SKIP_SBANKEN {
         info!("Starting transaction fetcher");
-        all_transactions = fetch_transactions();
+        all_transactions = match fetch_transactions() {
+            Some(ts) => ts,
+            None => HashMap::new(),
+        };
 
         for transaction in &all_transactions {
             trace!("Processing transaction {:#?}", transaction);
@@ -42,7 +45,7 @@ fn main() {
     info!("Done.");
 }
 
-fn fetch_transactions() -> HashMap<String, Vec<Transaction>> {
+fn fetch_transactions() -> Option<HashMap<String, Vec<Transaction>>> {
     info!("Fetching transactions.");
     return sbanken::api::fetch_transactions_from_sbanken();
 }
