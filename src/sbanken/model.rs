@@ -69,7 +69,7 @@ pub struct SBankenTransactionsResponse {
     // "traceId":null
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 #[derive(Deserialize)]
 pub struct Transaction {
     #[serde(default)]

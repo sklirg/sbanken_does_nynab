@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate log;
 extern crate log4rs;
+extern crate regex;
 extern crate reqwest;
 
 #[macro_use]
