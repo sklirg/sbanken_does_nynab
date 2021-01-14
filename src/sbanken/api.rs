@@ -5,9 +5,9 @@ use self::serde_json::{from_str};
 use reqwest::{StatusCode};
 use std::collections::HashMap;
 use std::io::Read;
-use sbanken::model::{Account, BearerTokenResponse, Transaction};
-use sbanken::data::{accounts_response_to_account, transactions_response_to_transactions};
-use sbanken::helpers::{build_authorization_http_client, build_api_client};
+use crate::sbanken::model::{Account, BearerTokenResponse, Transaction};
+use crate::sbanken::data::{accounts_response_to_account, transactions_response_to_transactions};
+use crate::sbanken::helpers::{build_authorization_http_client, build_api_client};
 
 // const SBANKEN_HOST : &str = "https://api.sbanken.no";
 // const SBANKEN_AUTH : &str = "/identityserver/connect/token";

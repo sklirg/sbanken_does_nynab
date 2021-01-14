@@ -1,6 +1,6 @@
 use std::env::{var};
 
-use ynab::model::{YnabConfig};
+use crate::ynab::model::{YnabConfig};
 
 pub fn get_config() -> YnabConfig {
     let config: YnabConfig = YnabConfig {

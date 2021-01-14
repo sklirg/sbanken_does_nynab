@@ -1,4 +1,4 @@
-use sbanken::model::{Account, SBankenAccountResponse, SBankenTransactionsResponse, Transaction};
+use crate::sbanken::model::{Account, SBankenAccountResponse, SBankenTransactionsResponse, Transaction};
 use regex::Regex;
 
 pub fn accounts_response_to_account(resp: String) -> Vec<Account> {

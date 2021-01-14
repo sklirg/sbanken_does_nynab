@@ -5,8 +5,8 @@ extern crate serde_json;
 use self::serde::Deserialize;
 use self::serde::de::Deserializer;
 
-use sbanken::model::{Transaction as SbankenTransaction};
-use ynab::helpers::to_milliunits;
+use crate::sbanken::model::{Transaction as SbankenTransaction};
+use crate::ynab::helpers::to_milliunits;
 
 pub struct YnabConfig {
     pub access_token: String,

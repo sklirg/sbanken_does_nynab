@@ -1,6 +1,6 @@
 use std::env::{var};
 
-use sbanken::model::{SbankenConfig};
+use crate::sbanken::model::{SbankenConfig};
 
 pub fn get_config() -> SbankenConfig {
     let config: SbankenConfig = SbankenConfig {

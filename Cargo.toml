@@ -2,6 +2,7 @@
 name = "sbanken_does_nynab"
 version = "0.1.0"
 authors = ["Håkon Solbjørg <hlsolbjorg@gmail.com>"]
+edition = "2018"
 
 [dependencies]
 base64 = "0.10.0"

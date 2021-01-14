@@ -1,6 +1,6 @@
 use reqwest::header;
-use helpers::http::{AuthenticationType, base64_encode_uname_pw, generate_auth_header, generate_header_value};
-use sbanken::config::{get_config};
+use crate::helpers::http::{AuthenticationType, base64_encode_uname_pw, generate_auth_header, generate_header_value};
+use crate::sbanken::config::{get_config};
 
 pub fn build_authorization_http_client() -> reqwest::blocking::Client {
     debug!("Building HTTP Client for authorization");

@@ -1,44 +1,12 @@
 use reqwest::{StatusCode};
-use ynab::config::get_config;
-// use ynab::data::{accounts_response_to_accounts, budgets_response_to_budgets};
-use ynab::helpers::{build_api_client};
-use ynab::model::{Transaction, TransactionsRequest};
+use crate::ynab::config::get_config;
+use crate::ynab::helpers::{build_api_client};
+use crate::ynab::model::{Transaction, TransactionsRequest};
+
 use std::io::Read;
 
 const BUDGETS_API: &str = "https://api.youneedabudget.com/v1/budgets";
 // const TRANSACTION_API: &str = "https://api.youneedabudget.com/v1/budgets/{}/transactions";
-
-// pub fn get_ynab_budgets() -> Vec<Budget> {
-//     let resp = do_api_request(parse_url(BUDGETS_API), Method::GET);
-//     let budgets = budgets_response_to_budgets(resp);
-//     debug!("Budgets: {:#?}", budgets);
-//     return budgets;
-// }
-
-// pub fn get_accounts(budget_id: String) -> Vec<Account> {
-//     let fmt_url = format!("{}/{}/accounts", BUDGETS_API, budget_id);
-//     let resp = do_api_request(parse_url(&fmt_url), Method::GET);
-//     let accounts = accounts_response_to_accounts(resp);
-
-//     trace!("Accounts: {:#?}", accounts);
-
-//     return accounts;
-// }
-
-// pub fn post_transaction(budget_id: &str, account_id: &str, transaction: Transaction) {
-//     let fmt_url = format!("{}/{}/transactions", BUDGETS_API, budget_id);
-
-//     let mut transactions: Vec<Transaction> = Vec::new();
-//     transactions.push(transaction);
-
-//     let transaction_request_body = TransactionsRequest{
-//         transactions: transactions,
-//     };
-
-//     let body = do_api_post_transaction_request(parse_url(&fmt_url), transaction_request_body);
-
-//     trace!("Posted transaction {:#?}", body);
-// }
 
 pub fn post_transactions(transactions: Vec<Transaction>) {
     let config = get_config();

@@ -1,6 +1,6 @@
 use reqwest::header;
-use helpers::http::{AuthenticationType, generate_auth_header};
-use ynab::config::{get_config};
+use crate::helpers::http::{AuthenticationType, generate_auth_header};
+use crate::ynab::config::{get_config};
 
 pub fn build_api_client() -> reqwest::blocking::Client {
     debug!("Building HTTP Client for authorized API requests");
