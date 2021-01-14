@@ -1,3 +1,4 @@
+extern crate confy;
 #[macro_use]
 extern crate log;
 extern crate log4rs;
@@ -7,6 +8,7 @@ extern crate reqwest;
 #[macro_use]
 extern crate serde_derive;
 
+mod config;
 mod helpers;
 mod sbanken;
 mod ynab;
@@ -15,18 +17,17 @@ use std::collections::HashMap;
 use sbanken::model::{Transaction};
 use ynab::api::{post_transactions};
 use ynab::model::{Transaction as YnabTransaction, sbanken_to_ynab_transaction};
-
-const SKIP_SBANKEN: bool = false;
-const SKIP_YNAB: bool = false;
+use config::config::{Conf, load};
 
 fn main() {
     log4rs::init_file("log4rs.yml", Default::default()).unwrap();
 
     info!("Starting app");
+    let conf = configure();
 
     let mut all_transactions = HashMap::new();
 
-    if !SKIP_SBANKEN {
+    if conf.run_sbanken_fetch {
         info!("Starting transaction fetcher");
         all_transactions = match fetch_transactions() {
             Some(ts) => ts,
@@ -38,12 +39,22 @@ fn main() {
         }
     }
 
-    if !SKIP_YNAB {
+    if conf.run_nynab_update {
         info!("Starting YNAB sync");
         update_ynab(all_transactions);
     }
 
     info!("Done.");
+}
+
+fn configure() -> Conf {
+    match load() {
+        Ok(c) => c,
+        Err(e) => {
+            error!("Failed to load config, using default: {}", e);
+            Conf::default()
+        },
+    }
 }
 
 fn fetch_transactions() -> Option<HashMap<String, Vec<Transaction>>> {
