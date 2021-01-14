@@ -17,22 +17,39 @@ image: "rust:latest"
 #   - apt-get update -yqq
 #   - apt-get install -yqq --no-install-recommends build-essential
 
+
+build:cargo:
+  stage: build
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+    - rustc --version && cargo --version
+    - cargo build --verbose --release
+  artifacts:
+    paths:
+      - target/release/sbanken_does_nynab
+    expire_in: 1 week
+
 # Use cargo to test the project
 test:cargo:
   stage: test
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
-    - rustc --version && cargo --version  # Print version info for debugging
+    - rustc --version && cargo --version
     - cargo test --workspace --verbose
 
-build-release:
+release:
   stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
   rules:
     - if: $CI_COMMIT_TAG
+  needs:
+    - job: build:cargo
+      artifacts: true
   script:
-    - cargo build --verbose --release
+    - echo 'running release job for $CI_COMMIT_TAG'
   release:
-    image: registry.gitlab.com/gitlab-org/release-cli:latest
+    description: Sbanken Does nYNAB
     tag_name: $CI_COMMIT_TAG
     ref: $CI_COMMIT_TAG
