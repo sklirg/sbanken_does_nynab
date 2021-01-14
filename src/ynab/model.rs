@@ -114,7 +114,7 @@ pub fn sbanken_to_ynab_transaction(transaction: &SbankenTransaction, account_id:
         date: transaction.accounting_date.to_string(),
         payee_name: Some(transaction.text.to_string()),
         amount: converted_amount,
-        memo: Some(transaction.text.to_string()),
+        memo: Some("".to_string()),
         import_id: import_id,
     };
 }
