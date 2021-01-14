@@ -52,7 +52,7 @@ prepare-release:
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
-    - grep -e "^version" Cargo.toml | tr -d "\"" | sed -e 's/version = /CARGO_VERSION=/'
+    - grep -e "^version" Cargo.toml | tr -d "\"" | sed -e 's/version = /CARGO_VERSION=/' >> variables.env
   artifacts:
     reports:
       dotenv: variables.env
