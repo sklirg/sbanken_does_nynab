@@ -2,7 +2,7 @@ use reqwest::header;
 use helpers::http::{AuthenticationType, base64_encode_uname_pw, generate_auth_header, generate_header_value};
 use sbanken::config::{get_config};
 
-pub fn build_authorization_http_client() -> reqwest::Client {
+pub fn build_authorization_http_client() -> reqwest::blocking::Client {
     debug!("Building HTTP Client for authorization");
     
     let config = get_config();
@@ -13,7 +13,7 @@ pub fn build_authorization_http_client() -> reqwest::Client {
     let mut headers = header::HeaderMap::new();
     headers.insert(header::AUTHORIZATION, auth_header);
 
-    return match reqwest::Client::builder()
+    return match reqwest::blocking::Client::builder()
         .default_headers(headers)
         .build() {
             Ok(client) => client,
@@ -24,7 +24,7 @@ pub fn build_authorization_http_client() -> reqwest::Client {
         };
 }
 
-pub fn build_api_client(credentials: String) -> reqwest::Client {
+pub fn build_api_client(credentials: String) -> reqwest::blocking::Client {
     debug!("Building HTTP Client for authorized API requests");
     let config = get_config();
 
@@ -32,14 +32,14 @@ pub fn build_api_client(credentials: String) -> reqwest::Client {
         credentials,
         AuthenticationType::Bearer);
 
-    let customer_id_header = generate_header_value(config.customer_id);
+    let customer_id_header = generate_header_value(&config.customer_id);
 
     let mut headers = header::HeaderMap::new();
     headers.insert(header::AUTHORIZATION, auth_header);
     headers.insert("customerId", customer_id_header);
 
 
-    return match reqwest::Client::builder()
+    return match reqwest::blocking::Client::builder()
         .default_headers(headers)
         .build() {
             Ok(client) => client,

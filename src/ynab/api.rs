@@ -1,4 +1,4 @@
-use reqwest::{StatusCode, Method};
+use reqwest::{StatusCode};
 use ynab::config::get_config;
 // use ynab::data::{accounts_response_to_accounts, budgets_response_to_budgets};
 use ynab::helpers::{build_api_client};

@@ -2,7 +2,7 @@ use reqwest::header;
 use helpers::http::{AuthenticationType, generate_auth_header};
 use ynab::config::{get_config};
 
-pub fn build_api_client() -> reqwest::Client {
+pub fn build_api_client() -> reqwest::blocking::Client {
     debug!("Building HTTP Client for authorized API requests");
     let config = get_config();
 
@@ -13,7 +13,7 @@ pub fn build_api_client() -> reqwest::Client {
     let mut headers = header::HeaderMap::new();
     headers.insert(header::AUTHORIZATION, auth_header);
 
-    return match reqwest::Client::builder()
+    return match reqwest::blocking::Client::builder()
         .default_headers(headers)
         .build() {
             Ok(client) => client,

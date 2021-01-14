@@ -20,10 +20,10 @@ pub fn generate_auth_header(credentials: String, auth_type: AuthenticationType) 
         AuthenticationType::Bearer => format!("Bearer {}", credentials),
     };
 
-    return generate_header_value(auth_header);
+    return generate_header_value(&auth_header);
 }
 
-pub fn generate_header_value(value: String) -> header::HeaderValue {
+pub fn generate_header_value(value: &str) -> header::HeaderValue {
     return match header::HeaderValue::from_str(&value) {
         Ok(val) => val,
         Err(error) => {
