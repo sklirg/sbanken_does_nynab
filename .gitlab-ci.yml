@@ -39,10 +39,13 @@ build:cargo:
   script:
     - rustc --version && cargo --version
     - cargo build --verbose --release
+    - grep -e "^version" Cargo.toml | tr -d "\"" | sed -e 's/version = /CARGO_VERSION=/' >> variables.env
   artifacts:
     paths:
       - target/release/sbanken_does_nynab
     expire_in: 1 week
+    reports:
+      dotenv: variables.env
 
 # Use cargo to test the project
 test:cargo:
@@ -64,13 +67,8 @@ prepare-release:
     - job: build:cargo
       artifacts: true
   script:
-    - grep -e "^version" Cargo.toml | tr -d "\"" | sed -e 's/version = /CARGO_VERSION=/' >> variables.env
-    - export CARGO_VERSION=$(grep -e "^version" Cargo.toml | tr -d "\"" | sed -e 's/version = //')
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file bin/${LINUX_AMD64_BINARY} ${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}
-  artifacts:
-    reports:
-      dotenv: variables.env
 
 release:
   stage: deploy
@@ -81,6 +79,8 @@ release:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   needs:
     - job: prepare-release
+      artifacts: true
+    - job: build:cargo
       artifacts: true
   script:
     - echo 'running release job for $CARGO_VERSION'
