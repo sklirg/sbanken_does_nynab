@@ -55,12 +55,19 @@ test:cargo:
 
 prepare-release:
   stage: prepare
+  image: curlimages/curl:latest
   rules:
     - if: $CI_COMMIT_TAG
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  needs:
+    - job: build:cargo
+      artifacts: true
   script:
     - grep -e "^version" Cargo.toml | tr -d "\"" | sed -e 's/version = /CARGO_VERSION=/' >> variables.env
+    - export CARGO_VERSION=$(grep -e "^version" Cargo.toml | tr -d "\"" | sed -e 's/version = //')
+    - |
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file bin/${LINUX_AMD64_BINARY} ${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}
   artifacts:
     reports:
       dotenv: variables.env
@@ -73,14 +80,10 @@ release:
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   needs:
-    - job: build:cargo
-      artifacts: true
     - job: prepare-release
       artifacts: true
   script:
     - echo 'running release job for $CARGO_VERSION'
-    - |
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file bin/${LINUX_AMD64_BINARY} ${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}
     - |
       release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CARGO_VERSION \
         --assets-link "{\"name\":\"${LINUX_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}\"}"
