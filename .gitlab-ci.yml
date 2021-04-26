@@ -71,7 +71,7 @@ prepare-release:
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file target/release/sbanken_does_nynab ${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}
 
 release:
-  stage: deploy
+  stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   rules:
     - if: $CI_COMMIT_TAG
