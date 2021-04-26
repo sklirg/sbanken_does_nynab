@@ -2,7 +2,7 @@ stages:
   - build
   - test
   - prepare
-  - deploy
+  - release
 
 variables:
   # Package version can only contain numbers (0-9), and dots (.).
