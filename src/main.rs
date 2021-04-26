@@ -24,14 +24,11 @@ fn main() {
 
     info!("Starting app");
 
-    let mut all_transactions = HashMap::new();
+    let mut all_transactions : Option<HashMap<String, Vec<Transaction>>> = None;
 
     if !SKIP_SBANKEN {
         info!("Starting transaction fetcher");
-        all_transactions = match fetch_transactions() {
-            Some(ts) => ts,
-            None => HashMap::new(),
-        };
+        all_transactions = fetch_transactions();
 
         for transaction in &all_transactions {
             trace!("Processing transaction {:#?}", transaction);
@@ -40,7 +37,10 @@ fn main() {
 
     if !SKIP_YNAB {
         info!("Starting YNAB sync");
-        update_ynab(all_transactions);
+        match all_transactions {
+            Some(txs) => update_ynab(txs),
+            None => (),
+        }
     }
 
     info!("Done.");
