@@ -1,4 +1,6 @@
-use crate::sbanken::model::{Account, SBankenAccountResponse, SBankenTransactionsResponse, Transaction};
+use crate::sbanken::model::{
+    Account, SBankenAccountResponse, SBankenTransactionsResponse, Transaction,
+};
 use regex::Regex;
 
 pub fn accounts_response_to_account(resp: String) -> Vec<Account> {
@@ -10,7 +12,10 @@ pub fn accounts_response_to_account(resp: String) -> Vec<Account> {
     let data: SBankenAccountResponse = match serde_json::from_str(&resp) {
         Ok(x) => x,
         Err(error) => {
-            panic!("Something went wrong while destructuring account response: {}", error);
+            panic!(
+                "Something went wrong while destructuring account response: {}",
+                error
+            );
         }
     };
 
@@ -26,7 +31,10 @@ pub fn transactions_response_to_transactions(resp: String) -> Vec<Transaction> {
     let data: SBankenTransactionsResponse = match serde_json::from_str(&resp) {
         Ok(x) => x,
         Err(error) => {
-            panic!("Something went wrong while destructuring transactions response: {}", error);
+            panic!(
+                "Something went wrong while destructuring transactions response: {}",
+                error
+            );
         }
     };
 

@@ -1,6 +1,6 @@
-use std::env::{var};
+use std::env::var;
 
-use crate::sbanken::model::{SbankenConfig};
+use crate::sbanken::model::SbankenConfig;
 
 pub fn get_config() -> SbankenConfig {
     let config: SbankenConfig = SbankenConfig {
@@ -21,7 +21,7 @@ pub fn get_config() -> SbankenConfig {
             Err(error) => {
                 panic!("Failed to read sbanken customer id from env: {}", error);
             }
-        }
+        },
     };
 
     return config;

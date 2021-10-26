@@ -1,6 +1,6 @@
-use std::env::{var};
+use std::env::var;
 
-use crate::ynab::model::{YnabConfig};
+use crate::ynab::model::YnabConfig;
 
 pub fn get_config() -> YnabConfig {
     let config: YnabConfig = YnabConfig {
@@ -15,7 +15,7 @@ pub fn get_config() -> YnabConfig {
             Err(error) => {
                 panic!("Failed to read ynab budget id from env: {}", error);
             }
-        }
+        },
     };
 
     return config;

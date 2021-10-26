@@ -1,7 +1,7 @@
-use reqwest::{StatusCode};
 use crate::ynab::config::get_config;
-use crate::ynab::helpers::{build_api_client};
+use crate::ynab::helpers::build_api_client;
 use crate::ynab::model::{Transaction, TransactionsRequest};
+use reqwest::StatusCode;
 
 use std::io::Read;
 
@@ -12,7 +12,7 @@ pub fn post_transactions(transactions: Vec<Transaction>) {
     let config = get_config();
     let fmt_url = format!("{}/{}/transactions", BUDGETS_API, config.budget_id);
 
-    let transaction_request_body = TransactionsRequest{
+    let transaction_request_body = TransactionsRequest {
         transactions: transactions,
     };
 
@@ -31,17 +31,14 @@ fn parse_url(url: &str) -> reqwest::Url {
 fn do_api_post_transaction_request(url: reqwest::Url, body: TransactionsRequest) -> String {
     let client = build_api_client();
 
-    let request = client
-            .post(url)
-            .json(&body)
-            .send();
+    let request = client.post(url).json(&body).send();
 
     let mut resp = match request {
         Ok(resp) => resp,
         Err(error) => {
             error!("{}", error);
             panic!("Response failed");
-        },
+        }
     };
 
     match resp.status() {
@@ -53,7 +50,7 @@ fn do_api_post_transaction_request(url: reqwest::Url, body: TransactionsRequest)
     match resp.read_to_string(&mut body) {
         Ok(data) => {
             trace!("Receieved {} data ({})", data, body);
-        },
+        }
         Err(error) => {
             error!("Failed to read response to string: {}", error);
         }

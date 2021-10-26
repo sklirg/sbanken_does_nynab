@@ -2,10 +2,10 @@ extern crate serde;
 extern crate serde_derive;
 extern crate serde_json;
 
-use self::serde::Deserialize;
 use self::serde::de::Deserializer;
+use self::serde::Deserialize;
 
-use crate::sbanken::model::{Transaction as SbankenTransaction};
+use crate::sbanken::model::Transaction as SbankenTransaction;
 use crate::ynab::helpers::to_milliunits;
 
 pub struct YnabConfig {
@@ -77,11 +77,11 @@ pub struct TransactionsRequest {
     pub transactions: Vec<Transaction>,
 }
 
-fn null_to_empty_string<'de, D>(d: D) -> Result<String, D::Error> where D: Deserializer<'de> {
-    Deserialize::deserialize(d)
-        .map(|x: Option<_>| {
-            x.unwrap_or("".to_string())
-        })
+fn null_to_empty_string<'de, D>(d: D) -> Result<String, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    Deserialize::deserialize(d).map(|x: Option<_>| x.unwrap_or("".to_string()))
 }
 
 pub fn sbanken_account_to_ynab(account_id: &str) -> String {
@@ -95,10 +95,13 @@ pub fn sbanken_account_to_ynab(account_id: &str) -> String {
     };
 }
 
-pub fn sbanken_to_ynab_transaction(transaction: &SbankenTransaction, account_id: &str) -> Transaction {
+pub fn sbanken_to_ynab_transaction(
+    transaction: &SbankenTransaction,
+    account_id: &str,
+) -> Transaction {
     debug!("Processing transaction {}", transaction.transaction_id);
     // trace!("Processing transaction {:#?}", transaction);
-    
+
     if transaction.transaction_id == "0" {
         warn!("Skipping transaction {} with id 0", transaction.text);
     }
@@ -107,9 +110,15 @@ pub fn sbanken_to_ynab_transaction(transaction: &SbankenTransaction, account_id:
 
     let ynab_account = sbanken_account_to_ynab(account_id);
 
-    let import_id = format!("sb:{}-{}-{:?}", transaction.accounting_date[..10].to_string(), transaction.amount, transaction.text.chars())[..36].to_string();
+    let import_id = format!(
+        "sb:{}-{}-{:?}",
+        transaction.accounting_date[..10].to_string(),
+        transaction.amount,
+        transaction.text.chars()
+    )[..36]
+        .to_string();
 
-    return Transaction{
+    return Transaction {
         account_id: ynab_account,
         date: transaction.accounting_date.to_string(),
         payee_name: Some(transaction.text.to_string()),

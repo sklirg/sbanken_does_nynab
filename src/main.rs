@@ -11,10 +11,10 @@ mod helpers;
 mod sbanken;
 mod ynab;
 
+use sbanken::model::Transaction;
 use std::collections::HashMap;
-use sbanken::model::{Transaction};
-use ynab::api::{post_transactions};
-use ynab::model::{Transaction as YnabTransaction, sbanken_to_ynab_transaction};
+use ynab::api::post_transactions;
+use ynab::model::{sbanken_to_ynab_transaction, Transaction as YnabTransaction};
 
 const SKIP_SBANKEN: bool = false;
 const SKIP_YNAB: bool = false;
@@ -24,7 +24,7 @@ fn main() {
 
     info!("Starting app");
 
-    let mut all_transactions : Option<HashMap<String, Vec<Transaction>>> = None;
+    let mut all_transactions: Option<HashMap<String, Vec<Transaction>>> = None;
 
     if !SKIP_SBANKEN {
         info!("Starting transaction fetcher");

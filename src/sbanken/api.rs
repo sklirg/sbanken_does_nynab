@@ -1,13 +1,13 @@
 extern crate hyper;
 extern crate serde_json;
 
-use self::serde_json::{from_str};
-use reqwest::{StatusCode};
+use self::serde_json::from_str;
+use crate::sbanken::data::{accounts_response_to_account, transactions_response_to_transactions};
+use crate::sbanken::helpers::{build_api_client, build_authorization_http_client};
+use crate::sbanken::model::{Account, BearerTokenResponse, Transaction};
+use reqwest::StatusCode;
 use std::collections::HashMap;
 use std::io::Read;
-use crate::sbanken::model::{Account, BearerTokenResponse, Transaction};
-use crate::sbanken::data::{accounts_response_to_account, transactions_response_to_transactions};
-use crate::sbanken::helpers::{build_authorization_http_client, build_api_client};
 
 // const SBANKEN_HOST : &str = "https://api.sbanken.no";
 // const SBANKEN_AUTH : &str = "/identityserver/connect/token";
@@ -25,12 +25,9 @@ fn fetch_client_credentials() -> Option<String> {
     let client = build_authorization_http_client();
 
     let body = [("grant_type", "client_credentials")];
-    
+
     info!("Executing authorization token request");
-    let http_resp = client
-        .post(AUTH_ENDPOINT)
-        .form(&body)
-        .send();
+    let http_resp = client.post(AUTH_ENDPOINT).form(&body).send();
 
     let mut resp = match http_resp {
         Ok(resp) => resp,
@@ -47,7 +44,7 @@ fn fetch_client_credentials() -> Option<String> {
     let mut body = String::new();
     resp.read_to_string(&mut body).ok()?;
 
-    let json_body : BearerTokenResponse = from_str(&body).ok()?;
+    let json_body: BearerTokenResponse = from_str(&body).ok()?;
 
     debug!("Retrieved bearer token");
 
@@ -59,16 +56,14 @@ fn fetch_accounts() -> Option<Vec<Account>> {
     let client = build_api_client(bearer_token);
 
     info!("Executing accounts request");
-    let http_resp = client
-        .get(ACCOUNTS_API)
-        .send();
+    let http_resp = client.get(ACCOUNTS_API).send();
 
     let mut resp = match http_resp {
         Ok(resp) => resp,
         Err(error) => {
             error!("{}", error);
             panic!("Response failed");
-        },
+        }
     };
 
     match resp.status() {
@@ -80,7 +75,7 @@ fn fetch_accounts() -> Option<Vec<Account>> {
     match resp.read_to_string(&mut body) {
         Ok(data) => {
             trace!("Receieved {} data", data);
-        },
+        }
         Err(error) => {
             error!("Failed to read response to string: {}", error);
         }
@@ -104,7 +99,7 @@ fn fetch_transactions(account_id: &str) -> Option<Vec<Transaction>> {
         Err(error) => {
             error!("{}", error);
             return None;
-        },
+        }
     };
 
     match resp.status() {
@@ -116,7 +111,7 @@ fn fetch_transactions(account_id: &str) -> Option<Vec<Transaction>> {
     match resp.read_to_string(&mut body) {
         Ok(data) => {
             trace!("Receieved {} data", data);
-        },
+        }
         Err(error) => {
             error!("Failed to read response to string: {}", error);
         }
@@ -132,7 +127,11 @@ pub fn fetch_transactions_from_sbanken() -> Option<HashMap<String, Vec<Transacti
 
     for account in accounts {
         let t = fetch_transactions(&account.account_id)?;
-        info!("Account ID {} with {} transactions", account.account_id, t.len());
+        info!(
+            "Account ID {} with {} transactions",
+            account.account_id,
+            t.len()
+        );
         accounts_with_transactions.insert(account.account_id, t);
     }
 

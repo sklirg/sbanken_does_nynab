@@ -25,7 +25,6 @@ pub struct SBankenAccountResponse {
     pub available_items: u16,
 
     pub items: Vec<Account>,
-
     // "errorType":null,
     // "isError":false,
     // "errorMessage":null,
@@ -36,7 +35,7 @@ pub struct SBankenAccountResponse {
 pub struct Account {
     #[serde(rename = "accountId")]
     pub account_id: String,
-    
+
     #[serde(rename = "accountNumber")]
     pub account_number: String,
 
@@ -62,15 +61,13 @@ pub struct SBankenTransactionsResponse {
     pub available_items: u16,
 
     pub items: Vec<Transaction>,
-
     // "errorType":null,
     // "isError":false,
     // "errorMessage":null,
     // "traceId":null
 }
 
-#[derive(Clone, Debug)]
-#[derive(Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct Transaction {
     #[serde(default)]
     #[serde(rename = "transactionId")]

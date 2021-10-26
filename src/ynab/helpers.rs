@@ -1,27 +1,26 @@
+use crate::helpers::http::{generate_auth_header, AuthenticationType};
+use crate::ynab::config::get_config;
 use reqwest::header;
-use crate::helpers::http::{AuthenticationType, generate_auth_header};
-use crate::ynab::config::{get_config};
 
 pub fn build_api_client() -> reqwest::blocking::Client {
     debug!("Building HTTP Client for authorized API requests");
     let config = get_config();
 
-    let auth_header = generate_auth_header(
-        config.access_token,
-        AuthenticationType::Bearer);
+    let auth_header = generate_auth_header(config.access_token, AuthenticationType::Bearer);
 
     let mut headers = header::HeaderMap::new();
     headers.insert(header::AUTHORIZATION, auth_header);
 
     return match reqwest::blocking::Client::builder()
         .default_headers(headers)
-        .build() {
-            Ok(client) => client,
-            Err(error) => {
-                error!("Building HTTP Client failed: {}", error);
-                panic!("building client failed");
-            },
-        };
+        .build()
+    {
+        Ok(client) => client,
+        Err(error) => {
+            error!("Building HTTP Client failed: {}", error);
+            panic!("building client failed");
+        }
+    };
 }
 
 pub fn to_milliunits(amount: &f32) -> i32 {

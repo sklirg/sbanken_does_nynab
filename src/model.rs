@@ -1,7 +1,7 @@
 struct Transaction {
     ID: String,
     AccountingDate: String, // Date
-    InterestDate: String, // Date
+    InterestDate: String,   // Date
     Amount: i32,
     Text: String,
     TransactionType: String,
